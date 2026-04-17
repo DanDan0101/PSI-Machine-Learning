@@ -95,11 +95,11 @@ class data:
         # Load saved models
         try:
             self.fcnn = torch.load(f"models/{self.name}_fcnn.pt", weights_only = False)
-        except:
+        except FileNotFoundError:
             pass
         try:
             self.pinn = torch.load(f"models/{self.name}_pinn.pt", weights_only = False)
-        except:
+        except FileNotFoundError:
             pass
 
     def unnormalize_pred(self, pred):
@@ -111,7 +111,7 @@ class data:
         plt.figure(dpi = 300, layout = "constrained")
         plt.plot(self.t, self.p[:, 0], label = "Hare")
         plt.plot(self.t, self.p[:, 1], label = "Lynx")
-        plt.axvline((self.period - 1) * self.dt, color = "black", linestyle = "--")
+        plt.axvline(self.t[int(np.ceil(0.6 * self.t.shape[0])) - 1], color = "black", linestyle = "--", label = "Train/Eval Split")
         plt.xlabel("Time (years)")
         plt.ylabel("Population (thousands)")
         plt.title(self.longname)
@@ -130,7 +130,7 @@ class data:
         plt.plot(self.t, pred[:, 1], label = "Lynx (Pred)", color = "C1", linestyle = "--")
 
         if train_line:
-            plt.axvline((self.period - 1) * self.dt, color = "black", linestyle = "--")
+            plt.axvline(self.t[int(np.ceil(0.6 * self.t.shape[0])) - 1], color = "black", linestyle = "--", label = "Train/Eval Split")
         
         plt.xlabel("Time (years)")
         plt.ylabel("Population (thousands)")
